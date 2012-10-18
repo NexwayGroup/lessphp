@@ -38,6 +38,9 @@
  * handling things like indentation.
  */
 class lessc {
+
+	const FILE_CHECKSUM_ALGORITHM = 'md5';
+
 	static public $VERSION = "v0.3.8";
 	static protected $TRUE = array("keyword", "true");
 	static protected $FALSE = array("keyword", "false");
@@ -1621,7 +1624,7 @@ class lessc {
 
 	// compile only if changed input has changed or output doesn't exist
 	public function checkedCompile($in, $out) {
-		if (!is_file($out) || filemtime($in) > filemtime($out)) {
+		if (!is_file($out) || hash_file(self::FILE_CHECKSUM_ALGORITHM, $in) > hash_file(self::FILE_CHECKSUM_ALGORITHM, $out)) {
 			$this->compileFile($in, $out);
 			return true;
 		}
@@ -1661,8 +1664,8 @@ class lessc {
 				// specify the root to trigger a rebuild.
 				$root = $in['root'];
 			} elseif (isset($in['files']) and is_array($in['files'])) {
-				foreach ($in['files'] as $fname => $ftime ) {
-					if (!file_exists($fname) or filemtime($fname) > $ftime) {
+				foreach ($in['files'] as $fname => $fsum) {
+					if (!file_exists($fname) or hash_file(self::FILE_CHECKSUM_ALGORITHM, $fname) !== $fsum) {
 						// One of the files we knew about previously has changed
 						// so we should look at our incoming root again.
 						$root = $in['root'];
@@ -1682,7 +1685,7 @@ class lessc {
 			$out['root'] = $root;
 			$out['compiled'] = $this->compileFile($root);
 			$out['files'] = $this->allParsedFiles();
-			$out['updated'] = time();
+			$out['sum'] = hash_file(self::FILE_CHECKSUM_ALGORITHM, $root);
 			return $out;
 		} else {
 			// No changes, pass back the structure
@@ -1775,7 +1778,7 @@ class lessc {
 	}
 
 	protected function addParsedFile($file) {
-		$this->allParsedFiles[realpath($file)] = filemtime($file);
+		$this->allParsedFiles[realpath($file)] = hash_file(self::FILE_CHECKSUM_ALGORITHM, $file);
 	}
 
 	/**
