@@ -1624,7 +1624,7 @@ class lessc {
 
 	// compile only if changed input has changed or output doesn't exist
 	public function checkedCompile($in, $out) {
-		if (!is_file($out) || hash_file(self::FILE_CHECKSUM_ALGORITHM, $in) > hash_file(self::FILE_CHECKSUM_ALGORITHM, $out)) {
+		if (!is_file($out) || hash_file(self::FILE_CHECKSUM_ALGORITHM, $in) !== hash_file(self::FILE_CHECKSUM_ALGORITHM, $out)) {
 			$this->compileFile($in, $out);
 			return true;
 		}
