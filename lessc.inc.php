@@ -1685,7 +1685,14 @@ class lessc {
 			$out['root'] = $root;
 			$out['compiled'] = $this->compileFile($root);
 			$out['files'] = $this->allParsedFiles();
-			$out['sum'] = hash_file(self::FILE_CHECKSUM_ALGORITHM, $root);
+
+			// Generate sum of all compiled files.
+			array_walk($this->allParsedFiles, function(&$value, $index) use(&$sums) {
+			    $sums .= $value;
+			});
+
+			$out['sum'] = md5($sums);
+
 			return $out;
 		} else {
 			// No changes, pass back the structure
