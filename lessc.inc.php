@@ -1305,7 +1305,7 @@ class lessc {
 				// fix added by jgautheron
 				// fixes a bug when a custom function returns a color
 				if (preg_match('/^#([a-z0-9]{6})$/i', $name)) {
-					return array('raw_color', $name);
+					return $this->coerceColor(array('raw_color', $name));
 				}
 				
 				if (isset(self::$cssColors[$name])) {
