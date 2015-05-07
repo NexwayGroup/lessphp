@@ -1,5 +1,6 @@
 {
-    "name": "leafo/lessphp",
+    "name": "nexway/lessphp",
+    "version": "1.0.0",
     "type": "library",
     "description": "lessphp is a compiler for LESS written in PHP.",
     "homepage": "http://leafo.net/lessphp/",
